@@ -1,0 +1,20 @@
+if test ! -d $1
+then
+	mkdir $1
+fi
+
+count=0
+
+for file in ./*
+do
+	echo $file
+	if test -f $file -a -r $file
+	then
+		echo "copying"
+		cp $file $1
+	else
+		count=`expr 1 + $count`
+	fi
+done
+
+echo $count

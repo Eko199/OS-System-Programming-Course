@@ -1,0 +1,6 @@
+for file in $1/*.c
+do
+   namesize=`expr length $file`
+   n=`expr $namesize - 2`
+   cc -o `expr substr $file 1 $n`.exe $file & 
+done

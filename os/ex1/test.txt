@@ -1,0 +1,4 @@
+hello.c
+second.c
+test.txt
+wc

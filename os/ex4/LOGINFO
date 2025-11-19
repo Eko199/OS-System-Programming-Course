@@ -1,0 +1,3 @@
+date
+who
+echo "Hello, $USER"

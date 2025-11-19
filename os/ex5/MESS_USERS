@@ -1,0 +1,7 @@
+read message
+for person in $*
+do
+if who | grep -q $person
+then echo $message | write $person
+fi
+done

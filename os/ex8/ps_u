@@ -1,0 +1,7 @@
+for usr in $*
+do
+	for pts in `who | grep $usr | cut -c10-22`
+	do
+		ps -e | grep $pts
+	done
+done

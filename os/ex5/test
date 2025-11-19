@@ -1,0 +1,4 @@
+if test 3 -eq 3
+then echo "This is today"
+else echo "Hello"
+fi

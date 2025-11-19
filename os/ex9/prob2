@@ -1,0 +1,27 @@
+read text
+
+n=$1
+dir=$2
+shift 2
+
+for usr in `echo $* | tr " " "\n" | sort`
+do
+	if [ -z "`who | grep $usr`" ]
+	then
+		continue
+	fi
+	
+	if [ -d $dir/$usr ]
+	then
+		cnt=`ls -l $dir/$usr | wc -l`
+		let cnt=$cnt-1
+
+		if [ $cnt -gt $n ]
+		then
+			echo $text | write $usr
+		elif [ $cnt -lt $n ]
+		then
+			echo "$usr $cnt" >> result
+		fi
+	fi
+done

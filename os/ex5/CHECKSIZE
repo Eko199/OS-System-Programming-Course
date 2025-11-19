@@ -1,0 +1,13 @@
+if test -d $1
+then 
+for file in $1/*
+do
+if test -f $file
+then 
+if test `wc -c < $file` -gt $2
+then echo $file
+fi
+fi
+done
+else echo "This is not a directory!"
+fi

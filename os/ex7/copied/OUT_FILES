@@ -1,0 +1,19 @@
+c1=`ls -l $1/*.out | wc -l`
+c2=`ls -l $2/*.out | wc -l`
+
+if test $c1 -gt $c2
+then
+	mkdir result
+	echo result
+	cd $1
+
+	for file in ./*
+	do
+		if test -f $file -a -r $file -a -w $file
+		then
+			mv $file ../result/$file
+		fi
+	done
+
+	cd ..
+fi

@@ -1,0 +1,13 @@
+read file
+
+for f in $1/*
+do
+	if [ -f $f ]
+	then
+		length=`wc -l $f | cut -f1 -d" "`
+		let length=$length-2
+		head -n2 $file > $f-copy
+		tail -n$length $f >> $f-copy
+		mv $f-copy $f
+	fi
+done

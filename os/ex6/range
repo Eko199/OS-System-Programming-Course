@@ -1,0 +1,8 @@
+i=$1
+while test $i -lt $2
+do
+    i=`expr $i + 1`    
+    echo -e "$i \c"
+done
+
+echo

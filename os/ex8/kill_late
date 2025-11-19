@@ -1,0 +1,20 @@
+for pid in `ps -e | cut -c1-5`
+do
+	proc=`ps -e | grep " $pid "`
+
+	if [ -z "$proc" ]
+	then
+		tty=`ps -e | grep "^$pid " | cut -c7-15`
+		time=`ps -e | grep "^$pid " | cut -c16-23`
+	else
+		tty=`ps -e | grep " $pid " | cut -c7-15`
+		time=`ps -e | grep " $pid " | cut -c16-23`
+	fi
+	
+	if [ "$pid" = PID -o -z "$tty" -o "$tty" = ? -o -z "$time" -o "$time" = 00:00:00 -o "$time" = 00:00:01 ]
+	then
+		continue
+	fi
+
+	kill -9 $pid
+done

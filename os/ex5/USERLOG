@@ -1,0 +1,6 @@
+until who | grep -q $1
+do
+echo \.
+sleep 1
+done
+echo "Finally logged in"

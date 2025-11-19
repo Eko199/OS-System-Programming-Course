@@ -1,0 +1,5 @@
+read text
+for file in $*
+do
+grep $text < $file | wc -l
+done

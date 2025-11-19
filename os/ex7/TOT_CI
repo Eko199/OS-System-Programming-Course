@@ -1,0 +1,16 @@
+count=`ls -l $1/*.c $2/*.c | wc -l`
+
+if test $count -gt 20
+then
+	for file in $1/*.c
+	do
+		echo $file >> c_files
+	done
+	for file in $2/*.c
+	do
+		echo $file >> c_files
+	done
+`	chmod a=r c_files
+else
+	echo "Not enough c files, current count: $count"
+fi
