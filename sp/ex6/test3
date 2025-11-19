@@ -1,0 +1,7 @@
+total 24
+drwxr-xr-x 2 kn00503 KN 4096 Nov  6 08:35 .
+drwxr-xr-x 8 kn00503 KN 4096 Nov  6 08:16 ..
+-rwxr-xr-x 1 kn00503 KN 5594 Nov  6 08:35 a.out
+-rw-r--r-- 1 kn00503 KN  616 Nov  6 08:29 prob1.c
+-rw-r--r-- 1 kn00503 KN  680 Nov  6 08:35 prob2.c
+-rw-r--r-- 1 kn00503 KN    0 Nov  6 08:35 test2
