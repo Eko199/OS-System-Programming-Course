@@ -7,5 +7,10 @@
 #include <mqueue.h>
 
 int main(int argc, char* argv[]) {
+	if (mq_unlink("/00503") < 0) {
+		perror("mq_unlink");
+		return -1;
+	}
+
 	return 0;
 }
