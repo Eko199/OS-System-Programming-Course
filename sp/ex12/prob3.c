@@ -20,7 +20,6 @@ int cleanup(sem_t* s, int child) {
 	return 0;
 }
 
-
 int main(int argc, char* argv[]) {
 	sem_t* s = sem_open(NAME, O_CREAT, 0600, 1);
 

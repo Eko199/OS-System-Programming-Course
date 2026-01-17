@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 		close(fd);
 
 		if (shm_unlink(SHARED) < 0) {
-			perror("unlink");
+			perror("shm_unlink");
 		}
 
 		return -1;
@@ -45,6 +45,11 @@ int main(int argc, char* argv[]) {
 
 	if (child < 0) {
 		perror("fork");
+
+		if (munmap(cnt, sizeof(int)) < 0) {
+			perror("munmap");
+		}
+
 		close(fd);
 
 		if (shm_unlink(SHARED) < 0) {
@@ -54,7 +59,6 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	
 	while (*cnt < 100) {
 		sleep(child == 0 ? 1 : 2);
 		(*cnt)++;
