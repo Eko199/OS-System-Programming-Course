@@ -1,0 +1,1 @@
+#define MQ_NAME "/mq00503"

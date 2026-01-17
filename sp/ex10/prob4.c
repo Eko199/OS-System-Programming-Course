@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <mqueue.h>
+#include <errno.h>
+#include <signal.h>
 
 #define MQ_NAME "/00503"
 
@@ -17,6 +19,10 @@ int cleanup(mqd_t mqd) {
 	}
 
 	return 0;
+}
+
+void handle_sigint(int sig) {
+	// Just to interrupt read
 }
 
 int main(int argc, char* argv[]) {
@@ -41,11 +47,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	if (child == 0) {
-		int fd = open(argv[1], O_RDONLY);
+		int fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		
 		if (fd < 0) {
 			perror("open");
-			mq_send(mqd, NULL, 0, 0);
 			mq_close(mqd);
 			return -1;
 		}
@@ -53,22 +58,18 @@ int main(int argc, char* argv[]) {
 		char buf[8192];
 		int cnt;		
 
-		while ((cnt = read(fd, buf, 8192)) > 0) {
-			if (mq_send(mqd, buf, cnt, 0) < 0) {
-				perror("mq_send");
-				close(fd);
-				mq_close(mqd);
-				return -1;
-			}
+		while ((cnt = mq_receive(mqd, buf, 8192, NULL)) > 0) {
+			write(fd, buf, cnt);
 		}
 
-		close(fd);
-
-		if (mq_send(mqd, NULL, 0, 0) < 0) {
-			perror("mq_send");
+		if (cnt < 0) {
+			perror("mq_receive");
+			close(fd);
 			mq_close(mqd);
 			return -1;
 		}
+
+		close(fd);
 
 		if (mq_close(mqd) < 0) {
 			perror("mq_close");
@@ -77,15 +78,29 @@ int main(int argc, char* argv[]) {
 
 		return 0;
 	}
-			
+	
+	struct sigaction sa;
+    sa.sa_handler = handle_sigint;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+
 	char msg[8192];
 	ssize_t cnt;
-	while ((cnt = mq_receive(mqd, msg, 8192, NULL)) > 0) {
-		write(1, msg, cnt);
+	while ((cnt = read(0, msg, 8192)) >= 0) {
+		if (mq_send(mqd, msg, cnt, 0) < 0) {
+			perror("mq_send");
+			cleanup(mqd);
+			return -1;
+		}
+
+		if (cnt == 0) {
+			break;
+		}
 	}
 
-	if (cnt < 0) {
-		perror("mq_receive");
+	if (cnt < 0 && errno == EINTR && mq_send(mqd, NULL, 0, 0) < 0) {
+		perror("mq_send");
 		cleanup(mqd);
 		return -1;
 	}

@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <mqueue.h>
 
-#define MQ_NAME "/00503"
+#include "mqname.h"
 
 int cleanup(mqd_t mqd) {
 	mq_close(mqd);
@@ -20,21 +20,19 @@ int cleanup(mqd_t mqd) {
 }
 
 int main(int argc, char* argv[]) {
-	mqd_t mqd = mq_open(MQ_NAME, O_RDWR | O_CREAT, 0644, NULL);
+	mqd_t mqd = mq_open(MQ_NAME, O_RDONLY | O_CREAT, 0644, NULL);
 
 	if (mqd < 0) {
 		perror("mq_open");
 		return -1;
 	}
 
-	if (mq_send(mqd, "Hello there!\n", 13, 0) < 0) {
-		perror("mq_send");
-		cleanup(mqd);
-		return -1;
-	}
+	char buf[8192];
+	int cnt;
 
-	char msg[8192];
-	ssize_t cnt = mq_receive(mqd, msg, 8192, NULL);
+	while ((cnt = mq_receive(mqd, buf, 8192, NULL)) > 0) {
+		write(1, buf, cnt);
+	}
 
 	if (cnt < 0) {
 		perror("mq_receive");
@@ -42,6 +40,5 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	write(1, msg, cnt);
 	return cleanup(mqd);
 }

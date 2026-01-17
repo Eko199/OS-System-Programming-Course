@@ -27,21 +27,17 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	if (mq_send(mqd, "Hello there!\n", 13, 0) < 0) {
-		perror("mq_send");
+	struct mq_attr attr;
+	if (mq_getattr(mqd, &attr) < 0) {
+		perror("mq_getattr");
 		cleanup(mqd);
 		return -1;
 	}
 
-	char msg[8192];
-	ssize_t cnt = mq_receive(mqd, msg, 8192, NULL);
+	printf("Flags: %ld\n", attr.mq_flags);
+	printf("Max messages: %ld\n", attr.mq_maxmsg);
+	printf("Max message size: %ld\n", attr.mq_msgsize);
+	printf("Current messages: %ld\n", attr.mq_curmsgs);
 
-	if (cnt < 0) {
-		perror("mq_receive");
-		cleanup(mqd);
-		return -1;
-	}
-
-	write(1, msg, cnt);
 	return cleanup(mqd);
 }
